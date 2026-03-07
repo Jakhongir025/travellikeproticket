@@ -3,27 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Like Pro - Ticket System</title>
+    <title>Travel Like Pro - Mobile Ready</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
         
-        body { font-family: 'Arial', sans-serif; background: #525659; margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
+        body { 
+            font-family: 'Arial', sans-serif; 
+            background: #525659; 
+            margin: 0; 
+            padding: 10px; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
         
-        .nav-buttons { margin-bottom: 20px; background: white; padding: 15px; border-radius: 8px; width: 800px; display: flex; justify-content: center; gap: 10px; }
-        button { padding: 10px 20px; cursor: pointer; border: none; border-radius: 4px; font-weight: bold; }
+        /* Navigatsiya tugmalari mobilga moslashgan */
+        .nav-buttons { 
+            margin-bottom: 20px; 
+            background: white; 
+            padding: 15px; 
+            border-radius: 8px; 
+            width: 100%; 
+            max-width: 800px; 
+            display: flex; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 10px; 
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        button { 
+            padding: 12px 18px; 
+            cursor: pointer; 
+            border: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            font-size: 14px;
+            flex: 1;
+            min-width: 120px;
+        }
+
         .btn-blue { background: #1a2b56; color: white; }
         .btn-red { background: #e91e63; color: white; }
 
+        /* Mobil qurilmalarda biletni surib ko'rish (Scroll) */
+        .ticket-wrapper {
+            width: 100%;
+            overflow-x: auto; /* Telefonda o'ngga-chapga suriladi */
+            display: flex;
+            justify-content: flex-start;
+            padding-bottom: 20px;
+        }
+
         /* A4 Fixed Width Container */
         #ticket-container { 
-            width: 800px; 
+            width: 800px; /* PDF sifati buzilmasligi uchun qat'iy kenglik */
             background: white; 
             padding: 40px; 
             min-height: 1120px;
-            position: relative;
+            margin: 0 auto;
+            flex-shrink: 0; /* Qisqarib ketishini oldini oladi */
         }
 
+        /* Sarlavha */
         .itinerary-header {
             font-size: 13px;
             color: #333;
@@ -34,6 +80,7 @@
         }
         .itinerary-header span { color: #aaa; font-weight: normal; }
 
+        /* Logotip va Manzil */
         .header-main {
             display: flex;
             align-items: center;
@@ -48,7 +95,7 @@
         .pink-u { border-bottom: 3px solid #f24484; display: inline-block; line-height: 0.9; }
         .phone-row { display: block; margin-top: 5px; padding-left: 45px; }
 
-        /* Flight Table Fix */
+        /* Jadval */
         .main-table { width: 100%; border-collapse: separate; border-spacing: 0 15px; table-layout: fixed; }
         .main-table th { text-align: left; font-size: 11px; color: #888; font-weight: normal; padding: 0 10px 5px 10px; }
         
@@ -63,14 +110,14 @@
 
         .time { font-size: 22px; font-weight: bold; color: #000; display: block; }
         .date { font-size: 13px; font-weight: bold; color: #000; display: block; }
-        .loc { font-size: 10px; color: #555; display: block; margin-top: 5px; line-height: 1.3; overflow: hidden; }
+        .loc { font-size: 10px; color: #555; display: block; margin-top: 5px; line-height: 1.3; }
         .f-code { font-weight: bold; font-size: 14px; color: #000; }
 
         .baggage-cell { font-size: 10px; color: #000; line-height: 1.3; }
         .baggage-title { font-weight: bold; font-size: 11px; display: block; margin-bottom: 2px; }
         .baggage-desc { color: #666; font-size: 9px; display: block; margin-bottom: 5px; }
 
-        /* Passenger Info Section Fix */
+        /* Yo'lovchi ma'lumotlari */
         .passenger-table { 
             width: 100%; 
             margin-top: 30px; 
@@ -82,7 +129,7 @@
         .info-label { display: block; font-size: 11px; color: #aaa; margin-bottom: 5px; }
         .info-value { font-weight: bold; font-size: 14px; text-transform: uppercase; color: #000; word-wrap: break-word; display: block; }
 
-        /* Legal Text */
+        /* Pastki matn */
         .legal {
             margin-top: 40px;
             font-size: 10px;
@@ -93,9 +140,31 @@
             padding-top: 15px;
         }
 
-        [contenteditable="true"]:hover { background: #e8f0fe; outline: none; border-radius: 2px; }
-        
-        @media print { .nav-buttons { display: none; } }
+        /* Tahrirlash effekti */
+        [contenteditable="true"] {
+            border: 1px solid transparent;
+            padding: 2px;
+        }
+        [contenteditable="true"]:focus {
+            background: #e8f0fe;
+            border: 1px solid #1a2b56;
+            outline: none;
+            border-radius: 4px;
+        }
+
+        /* Telefonda ko'rinadigan ko'rsatma */
+        .mobile-hint {
+            display: none;
+            color: white;
+            font-size: 12px;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 850px) {
+            .mobile-hint { display: block; }
+        }
+
+        @media print { .nav-buttons, .mobile-hint { display: none; } }
     </style>
 </head>
 <body>
@@ -106,100 +175,103 @@
         <button class="btn-red" onclick="downloadPDF()">PDF Saqlash</button>
     </div>
 
-    <div id="ticket-container">
-        <div class="itinerary-header">Маршрутная квитанция электронного билета / <span>Itinerary</span></div>
+    <div class="mobile-hint">↔ Tahrirlash uchun biletni yon tomonga suring</div>
 
-        <div class="header-main">
-            <div class="logo-box">
-                <img src="/travel.png" alt="Logo">
-            </div>
-            <div class="address-box">
-                <div contenteditable="true">
-                    <span class="pink-u">Toshkent,</span> <span class="pink-u">Yakkasaray</span> Sh.<span class="pink-u">Rustaveli</span> 60
+    <div class="ticket-wrapper">
+        <div id="ticket-container">
+            <div class="itinerary-header">Маршрутная квитанция электронного билета / <span>Itinerary</span></div>
+
+            <div class="header-main">
+                <div class="logo-box">
+                    <img src="https://i.ibb.co/Lzt9YmFf/image.png" alt="Logo">
                 </div>
-                <div class="phone-row" contenteditable="true">+998 50 500 5001</div>
+                <div class="address-box">
+                    <div contenteditable="true">
+                        <span class="pink-u">Toshkent,</span> <span class="pink-u">Yakkasaray</span> Sh.<span class="pink-u">Rustaveli</span> 60
+                    </div>
+                    <div class="phone-row" contenteditable="true">+998 50 500 5001</div>
+                </div>
             </div>
-        </div>
 
-        <table class="main-table">
-            <thead>
+            <table class="main-table">
+                <thead>
+                    <tr>
+                        <th style="width:18%">Reys/Flight</th>
+                        <th style="width:27%">Uchish/Departure</th>
+                        <th style="width:27%">Qo'nish/Arrival</th>
+                        <th style="width:28%">Bagaj/Baggage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="flight-row">
+                        <td><div class="f-code" contenteditable="true">Air China<br>CA1705</div></td>
+                        <td>
+                            <div class="time" contenteditable="true">08:10</div>
+                            <div class="date" contenteditable="true">05.11.2025</div>
+                            <div class="loc" contenteditable="true">Guangzhou Baiyun International Airport T2</div>
+                        </td>
+                        <td>
+                            <div class="time" contenteditable="true">10:20</div>
+                            <div class="date" contenteditable="true">05.11.2025</div>
+                            <div class="loc" contenteditable="true">Hangzhou Xiaoshan International Airport T4</div>
+                        </td>
+                        <td class="baggage-cell">
+                            <div contenteditable="true">
+                                <span class="baggage-title">Багаж 1 место 20 кг</span>
+                                <span class="baggage-desc">Max 158CM | 20 kg.</span>
+                                <span class="baggage-title">Ручная кладь 1 место 8 кг</span>
+                                <span class="baggage-desc">Max 55*40*20CM | 8 kg.</span>
+                            </div>
+                        </td>
+                    </tr>
+
+                    <tr class="flight-row" id="return-row" style="display:none">
+                        <td><div class="f-code" contenteditable="true">Air China<br>CA777</div></td>
+                        <td>
+                            <div class="time" contenteditable="true">16:10</div>
+                            <div class="date" contenteditable="true">28.11.2025</div>
+                            <div class="loc" contenteditable="true">Hangzhou Xiaoshan International Airport T4</div>
+                        </td>
+                        <td>
+                            <div class="time" contenteditable="true">19:40</div>
+                            <div class="date" contenteditable="true">28.11.2025</div>
+                            <div class="loc" contenteditable="true">Tashkent International Airport T2</div>
+                        </td>
+                        <td class="baggage-cell">
+                            <div contenteditable="true">
+                                <span class="baggage-title">Багаж 1 место 20 кг</span>
+                                <span class="baggage-desc">Max 158CM | 20 kg.</span>
+                                <span class="baggage-title">Ручная кладь 1 место 8 кг</span>
+                                <span class="baggage-desc">Max 55*40*20CM | 8 kg.</span>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <table class="passenger-table">
                 <tr>
-                    <th style="width:18%">Reys/Flight</th>
-                    <th style="width:27%">Uchish/Departure</th>
-                    <th style="width:27%">Qo'nish/Arrival</th>
-                    <th style="width:28%">Bagaj/Baggage</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr class="flight-row">
-                    <td><div class="f-code" contenteditable="true">Air China<br>CA1705</div></td>
-                    <td>
-                        <div class="time" contenteditable="true">08:10</div>
-                        <div class="date" contenteditable="true">05.11.2025</div>
-                        <div class="loc" contenteditable="true">Guangzhou Baiyun International Airport T2</div>
+                    <td style="width: 45%;">
+                        <span class="info-label">Yo'lovchi / Passenger</span>
+                        <span class="info-value" contenteditable="true">ABDURAZZOQOV / JAHONGIR</span>
                     </td>
-                    <td>
-                        <div class="time" contenteditable="true">10:20</div>
-                        <div class="date" contenteditable="true">05.11.2025</div>
-                        <div class="loc" contenteditable="true">Hangzhou Xiaoshan International Airport T4</div>
+                    <td style="width: 20%;">
+                        <span class="info-label">Buyurtma / Reference</span>
+                        <span class="info-value" contenteditable="true">MVL64Q</span>
                     </td>
-                    <td class="baggage-cell">
-                        <div contenteditable="true">
-                            <span class="baggage-title">Багаж 1 место 20 кг</span>
-                            <span class="baggage-desc">Dimensions max 158CM | Max weight: 20 kg.</span>
-                            <span class="baggage-title">Ручная кладь 1 место 8 кг</span>
-                            <span class="baggage-desc">Dimensions max 55*40*20CM | Max weight: 8 kg.</span>
-                        </div>
+                    <td style="width: 35%;">
+                        <span class="info-label">Bilet raqami / Ticket number</span>
+                        <span class="info-value" contenteditable="true">784-2133031245</span>
                     </td>
                 </tr>
+            </table>
 
-                <tr class="flight-row" id="return-row" style="display:none">
-                    <td><div class="f-code" contenteditable="true">Air China<br>CA777</div></td>
-                    <td>
-                        <div class="time" contenteditable="true">16:10</div>
-                        <div class="date" contenteditable="true">28.11.2025</div>
-                        <div class="loc" contenteditable="true">Hangzhou Xiaoshan International Airport T4</div>
-                    </td>
-                    <td>
-                        <div class="time" contenteditable="true">19:40</div>
-                        <div class="date" contenteditable="true">28.11.2025</div>
-                        <div class="loc" contenteditable="true">Tashkent International Airport T2</div>
-                    </td>
-                    <td class="baggage-cell">
-                        <div contenteditable="true">
-                            <span class="baggage-title">Багаж 1 место 20 кг</span>
-                            <span class="baggage-desc">Dimensions max 158CM | Max weight: 20 kg.</span>
-                            <span class="baggage-title">Ручная кладь 1 место 8 кг</span>
-                            <span class="baggage-desc">Dimensions max 55*40*20CM | Max weight: 8 kg.</span>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-
-        <!-- Yo'lovchi ma'lumotlari bo'limi jadval ko'rinishida (Stabilroq) -->
-        <table class="passenger-table">
-            <tr>
-                <td style="width: 45%;">
-                    <span class="info-label">Yo'lovchi / Passenger</span>
-                    <span class="info-value" contenteditable="true">ABDURAZZOQOV / JAHONGIR</span>
-                </td>
-                <td style="width: 20%;">
-                    <span class="info-label">Buyurtma / Reference</span>
-                    <span class="info-value" contenteditable="true">MVL64Q</span>
-                </td>
-                <td style="width: 35%;">
-                    <span class="info-label">Bilet raqami / Ticket number</span>
-                    <span class="info-value" contenteditable="true">784-2133031245</span>
-                </td>
-            </tr>
-        </table>
-
-        <div class="legal">
-            Указан тип самолёта, заявленный на момент бронирования билетов. Самолёт может быть заменён перевозчиком. <br>
-            <b>Основные условия Договора воздушной перевозки пассажира и багажа</b><br><br>
-            Перевозка, выполняемая по настоящему договору, и другие предоставляемые каждым перевозчиком услуги подчиняются: (I) условиям, изложенным в билете; (II) применяемым тарифам; (III) условиям перевозки перевозчика. Полный текст Договора доступен на сайте IATA. Правила возврата и обмена билета определяются перевозчиком.<br><br>
-            К перевозке, имеющей пункт назначения или остановку не в стране отправления, могут применяться положения Варшавской конвенции или Монреальской конвенции, которые определяют и могут ограничивать ответственность перевозчика за смерть или причинение вреда здоровью пассажира, а также за утрату или повреждение багажа.
+            <div class="legal">
+                Указан тип самолёта, заявленный на момент бронирования билетов. Самолёт может быть заменён перевозчиком. <br>
+                <b>Основные условия Договора воздушной перевозки пассажира и багажа</b><br><br>
+                Перевозка, выполняемая по настоящему договору, и другие предоставляемые каждым перевозчиком услуги подчиняются: (I) условиям, изложенным в билете; (II) применяемым тарифам; (III) условиям перевозки перевозчика. <br><br>
+                К перевозке, имеющей пункт назначения или остановку не в стране отправления, могут применяться положения Варшавской конвенции или Монреальской конвенции.
+            </div>
         </div>
     </div>
 
@@ -210,18 +282,23 @@
 
         function downloadPDF() {
             const element = document.getElementById('ticket-container');
+            
+            // PDF yuklashda bilet kengligini va masshtabini to'g'irlash
             const opt = {
                 margin: 0,
-                filename: 'Ticket_TravelLikePro.pdf',
+                filename: 'Flight_Ticket.pdf',
                 image: { type: 'jpeg', quality: 1 },
                 html2canvas: { 
                     scale: 2, 
                     useCORS: true, 
                     logging: false,
-                    letterRendering: true
+                    scrollX: 0,
+                    scrollY: 0,
+                    width: 800 // PDF kengligini qulflash
                 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
+            
             html2pdf().set(opt).from(element).save();
         }
     </script>
