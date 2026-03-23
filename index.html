@@ -49,7 +49,7 @@
 
         .page { 
             width: 210mm; 
-            height: 296mm; /* A4 dan biroz kichikroq (xatoliklar oldini olish uchun) */
+            height: 296mm; 
             padding: 10mm 10mm; 
             background: white; 
             display: flex; 
@@ -57,7 +57,6 @@
             overflow: hidden;
         }
 
-        /* Faqat 2-sahifadan boshlab yangi sahifaga o'tish */
         .page-break { page-break-before: always; }
 
         .top-line {
@@ -78,7 +77,6 @@
             font-size: 11px; font-weight: 800; text-transform: uppercase; color: #000;
         }
 
-        /* REYS BOX */
         .flight-card {
             border: 1px solid var(--border-color); border-radius: 12px;
             margin-bottom: 15px; overflow: hidden; position: relative;
@@ -122,9 +120,8 @@
 
         .label-sm { font-size: 8.5px; color: #576574; text-transform: uppercase; font-weight: 800; margin-bottom: 3px; display: block; }
         
-        /* Ismlar qismi (6 ta ism uchun ixcham) */
         .val-lg { 
-            font-size: 12px; 
+            font-size: 12.5px; 
             font-weight: 800; 
             color: var(--primary-blue); 
             text-transform: uppercase; 
@@ -159,7 +156,7 @@
             <button onclick="changeMode(6, this)">6 ta</button>
         </div>
 
-        <button class="btn-pdf" onclick="saveAsPDF()">PDF SIFATLI SAQLASH</button>
+        <button class="btn-pdf" onclick="saveAsPDF()">Yuklab Olish</button>
     </div>
 
     <div id="ticket-container"></div>
@@ -169,13 +166,34 @@
         const agencyDetails = "Toshkent, Yakkasaray Sh. Rustaveli 60<br>+998 50 500 5001";
         const legalText = "Ko‘rsatilgan samolyot turi chipta bron qilingan paytdagi ma’lumotga asoslangan. Aviakompaniya samolyotni almashtirishi mumkin. Yo‘lovchi va bagajni havo orqali tashish shartnomasi Varshava yoki Monreal konvensiyasi qoidalari asosida amalga oshiriladi.";
 
+        // Ismlar sonini tekshirish funksiyasi
+        function validatePassengerNames(element) {
+            const text = element.innerText;
+            const lines = text.split('\n').filter(line => line.trim() !== "");
+            
+            if (lines.length > 6) {
+                alert("Diqqat! Bitta boxga ko'pi bilan 6 ta yo'lovchi kiritish mumkin.");
+                // Faqat birinchi 6 ta qatorni qoldirish
+                const validLines = lines.slice(0, 6);
+                element.innerText = validLines.join('\n');
+                
+                // Kursorni oxiriga qaytarish
+                const range = document.createRange();
+                const sel = window.getSelection();
+                range.selectNodeContents(element);
+                range.collapse(false);
+                sel.removeAllRanges();
+                sel.addRange(range);
+            }
+        }
+
         function createFlightCard(index) {
             return `
             <div class="flight-card">
                 <div class="card-top">
                     <div>
                         <div class="f-num" contenteditable="true">VE-912${index}</div>
-                        <div class="f-model" contenteditable="true">Airbus A320</div>
+                        <div class="f-model" contenteditable="true"></div>
                     </div>
                     <div>
                         <div class="time" contenteditable="true">11:30</div>
@@ -201,7 +219,7 @@
                 <div class="card-bottom">
                     <div>
                         <span class="label-sm">Yo'lovchi / Passenger</span>
-                        <div class="val-lg" contenteditable="true">1. FAMILIA ISM\n2. FAMILIA ISM\n3. FAMILIA ISM\n4. FAMILIA ISM\n5. FAMILIA ISM\n6. FAMILIA ISM</div>
+                        <div class="val-lg" contenteditable="true" oninput="validatePassengerNames(this)">1. FAMILIA ISM</div>
                     </div>
                     <div>
                         <span class="label-sm">Buyurtma / Reference</span>
@@ -227,7 +245,6 @@
                 if (i % 3 === 0) {
                     const pageNum = Math.floor(i / 3) + 1;
                     const pageDiv = document.createElement('div');
-                    // Faqat 2-sahifadan boshlab page-break klassini qo'shish
                     pageDiv.className = 'page' + (pageNum > 1 ? ' page-break' : '');
                     pageDiv.innerHTML = `
                         <div class="top-line">ELECTRONIC TICKET ITINERARY ${pageNum > 1 ? '(CONTINUED)' : ''} / SAYOHAT JADVALI</div>
