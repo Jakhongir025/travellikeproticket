@@ -170,7 +170,7 @@
         <div class="main-nav">
             <button class="btn-blue" onclick="setMode(1)">Bir tomonlama</button>
             <button class="btn-blue" onclick="setMode(2)">Borish-Qaytish</button>
-            <button class="btn-grey" onclick="toggleMulti()">Multi-city (3-6) ▾</button>
+            <button class="btn-grey" onclick="toggleMulti()">Bir nechta shahar (3-6) ▾</button>
             <button class="btn-red" onclick="downloadPDF()">PDF Saqlash</button>
         </div>
         <div id="multi-choice" class="multi-choice">
@@ -221,7 +221,12 @@
     </div>
 
     <script>
-        const legalContent = `Ko‘rsatilgan uchish vaqti va samolyot turi, chipta bron qilingan paytdagi ma’lumotga asoslangan. Aviakompaniya uchish vaqtini va samolyotni turini almashtirish huquqiga ega! Ro'yhatga olish parvoz vaqtidan 3 soat oldin boshlanadi va parvoz vaqtiga 1 soat qolganda to'xtatiladi.<br><br>The indicated departure time and aircraft type are based on the information available at the time of ticket booking. The airline reserves the right to change the departure time and aircraft type. Check-in begins 3 hours before departure and closes 1 hour before the flight.`;
+        const legalContent = `Ko‘rsatilgan uchish vaqti va samolyot turi, chipta bron qilingan paytdagi ma’lumotga asoslangan. Aviakompaniya uchish vaqtini va samolyotni turini almashtirish huquqiga ega! Ro'yhatga olish parvoz vaqtidan 3 soat oldin boshlanadi va parvoz vaqtiga 1 soat qolganda to'xtatiladi. Yo‘lovchi tashish bilan bog‘liq ravishda boriladigan davlatlarning barcha davlat organlari talablariga rioya qilishi, shuningdek kirish, chiqish va boshqa zarur hujjatlarga ega bo‘lishi shart.
+
+Agar yo‘lovchiga boriladigan mamlakatga kirish rad etilsa, tashuvchiga yetkazilgan barcha xarajatlar uchun yo‘lovchi javobgar bo‘ladi va tashuvchi ushbu rad etish natijasida yuzaga kelgan barcha xarajatlarni yo‘lovchidan undirish huquqiga ega<br><br>The indicated departure time and aircraft type are based on the information available at the time of ticket booking. The airline reserves the right to change the departure time and aircraft type. Check-in opens 3 hours before departure and closes 1 hour before the flight. The passenger should follow all the requirements of the state authorities of the countries of destination related to
+transportation, as well as, have entry, exit and other proper documents.
+In the case of denial of entry into the country of destination, the passenger is responsible for any costs incurred to the
+carrier and the carrier is entitled to recover from the passenger all costs incurred as a result of such denial.`;
 
         function toggleMulti() {
             const div = document.getElementById('multi-choice');
