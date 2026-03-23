@@ -3,8 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Like Pro - Agency Premium</title>
-    <!-- Professional Google Font -->
+    <title>Travel Like Pro - Official Design</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
@@ -12,10 +11,8 @@
             --primary: #1a2b56;
             --accent: #f24484;
             --bg-page: #525659;
-            --card-shadow: 0 10px 25px rgba(0,0,0,0.08);
-            --text-muted: #64748b;
-            /* Pastki fon - yanada to'qroq va aniqroq */
-            --bg-footer: #d1d8e2; 
+            --text-grey: #7f8c8d;
+            --card-footer-bg: #e7edf3; /* Rasmdagi to'qroq fon */
         }
 
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
@@ -30,55 +27,35 @@
             align-items: center; 
         }
         
-        /* Navigatsiya */
         .nav-buttons { 
-            margin-bottom: 30px; 
+            margin-bottom: 25px; 
             background: white; 
-            padding: 20px; 
+            padding: 15px; 
             border-radius: 12px; 
             width: 100%; 
-            max-width: 800px; 
+            max-width: 850px; 
             display: flex; 
             flex-direction: column;
-            align-items: center; 
-            gap: 12px; 
+            gap: 10px; 
             position: sticky;
             top: 10px;
             z-index: 1000;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
 
         .main-nav { display: flex; gap: 10px; width: 100%; }
-        .multi-choice { display: none; gap: 8px; margin-top: 10px; background: #f1f2f6; padding: 12px; border-radius: 8px; align-items: center; }
+        .multi-choice { display: none; gap: 8px; margin-top: 10px; background: #f0f2f5; padding: 10px; border-radius: 8px; }
 
-        button { 
-            padding: 14px 20px; 
-            cursor: pointer; 
-            border: none; 
-            border-radius: 8px; 
-            font-weight: 700; 
-            font-size: 13px;
-            flex: 1;
-            transition: 0.2s ease;
-        }
-
+        button { padding: 12px; cursor: pointer; border: none; border-radius: 8px; font-weight: 700; font-size: 13px; flex: 1; }
         .btn-blue { background: var(--primary); color: white; }
         .btn-grey { background: #4a4e51; color: white; }
         .btn-red { background: var(--accent); color: white; }
         .btn-num { background: white; color: var(--primary); border: 2px solid var(--primary); min-width: 45px; flex: none; }
-        .btn-num:hover { background: var(--primary); color: white; }
 
-        /* Bilet Konteyneri */
-        #ticket-container { 
-            width: 800px; 
-            background: white; 
-            margin: 0 auto;
-            flex-shrink: 0;
-            box-shadow: 0 0 50px rgba(0,0,0,0.3);
-        }
+        #ticket-container { width: 850px; background: white; margin: 0 auto; }
 
         .page {
-            padding: 50px;
+            padding: 40px 50px;
             min-height: 1120px; 
             display: flex;
             flex-direction: column;
@@ -88,102 +65,101 @@
         .page-break { page-break-before: always; }
 
         .itinerary-header {
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
-            letter-spacing: 2px;
-            color: #b1b1b1;
+            letter-spacing: 1.5px;
+            color: #7f8c8d;
             font-weight: 800;
-            border-bottom: 2px solid #f8f9fa;
+            border-bottom: 1px solid #e0e0e0;
             padding-bottom: 10px;
-            margin-bottom: 40px;
+            margin-bottom: 50px;
         }
 
         .header-main {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 50px;
+            margin-bottom: 60px;
         }
 
-        .logo-box { width: 240px; }
-        .logo-box img { width: 100%; display: block; }
+        .logo-box { width: 220px; }
+        .logo-box img { width: 100%; }
         
-        .address-box { 
-            text-align: right; 
-            font-size: 14px; 
-            color: #333; 
-            line-height: 1.6; 
-        }
+        .address-box { text-align: right; line-height: 1.6; }
+        .agency-name { font-weight: 900; color: var(--primary); font-size: 18px; margin-bottom: 5px; }
+        .agency-info { font-size: 14px; color: #576574; }
 
-        /* Sarlavhalar - To'q qora va aniq */
+        /* Sarlavhalar satri */
         .labels-row {
             display: grid;
             grid-template-columns: 18% 27% 27% 28%;
             padding: 0 25px 15px 25px;
-            font-size: 14px;
+            font-size: 13px;
             color: #000;
-            font-weight: 900;
+            font-weight: 800;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
 
-        /* REYS KARTASI */
+        /* REYS KARTASI - Rasmga moslangan */
         .flight-card {
             background: #fff;
-            border: 1px solid #eef2f7;
-            border-radius: 20px;
+            border: 1px solid #d1d8e0;
+            border-radius: 12px;
             margin-bottom: 30px;
-            box-shadow: var(--card-shadow);
             overflow: hidden;
             position: relative;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
         }
 
+        /* Chap tomondagi to'liq ko'k chiziq */
         .flight-card::before {
             content: '';
             position: absolute;
             left: 0; top: 0; bottom: 0;
-            width: 8px;
+            width: 10px;
             background: var(--primary);
         }
 
         .card-body {
             display: grid;
             grid-template-columns: 18% 27% 27% 28%;
-            padding: 30px 25px;
+            padding: 25px 30px;
         }
 
-        /* TO'QLASHTIRILGAN FOOTER */
+        /* Nuqtali separator chizig'i */
         .card-footer {
-            background: var(--bg-footer); 
-            padding: 22px 25px;
-            border-top: 1px dashed #adb5bd;
+            background: var(--card-footer-bg); 
+            padding: 20px 30px;
+            border-top: 1.5px dotted #b2bec3;
             display: grid;
             grid-template-columns: 45% 27% 28%;
         }
 
-        .time { font-size: 28px; font-weight: 800; color: #000; display: block; line-height: 1; }
-        .date { font-size: 15px; font-weight: 700; color: #000; display: block; margin-top: 5px; }
-        .loc { font-size: 12px; color: var(--text-muted); font-weight: 600; display: block; margin-top: 10px; line-height: 1.5; }
-        .f-code { font-weight: 800; font-size: 17px; color: var(--primary); }
+        .f-code { font-weight: 800; font-size: 20px; color: var(--primary); margin-bottom: 2px; }
+        .plane-type { font-size: 11px; color: #95a5a6; font-weight: 500; }
 
-        .baggage-title { font-weight: 800; font-size: 11px; display: block; color: #000; margin-bottom: 3px; }
-        .baggage-desc { color: #555; font-size: 10px; display: block; margin-bottom: 6px; }
+        .time { font-size: 32px; font-weight: 800; color: #000; display: block; line-height: 1; }
+        .date { font-size: 16px; font-weight: 800; color: #000; display: block; margin-top: 5px; }
+        .loc { font-size: 13px; color: #7f8c8d; font-weight: 600; display: block; margin-top: 10px; }
 
-        /* Yo'lovchi ma'lumotlari shrifti */
-        .psg-label { font-size: 11px; color: #4b5563; text-transform: uppercase; font-weight: 800; letter-spacing: 0.8px; }
-        .psg-value { font-size: 16px; font-weight: 900; color: var(--primary); display: block; margin-top: 5px; }
+        .baggage-title { font-weight: 800; font-size: 11px; display: block; color: #000; margin-bottom: 2px; }
+        .baggage-desc { color: #7f8c8d; font-size: 10px; display: block; margin-bottom: 5px; font-weight: 500; }
+
+        /* Footer matnlari */
+        .psg-label { font-size: 10px; color: #576574; text-transform: uppercase; font-weight: 800; margin-bottom: 5px; display: block; }
+        .psg-value { font-size: 18px; font-weight: 800; color: var(--primary); display: block; }
 
         .legal {
-            margin-top: auto; /* Har doim sahifa pastida turadi */
+            margin-top: auto;
             font-size: 11px;
-            color: #6c757d;
+            color: #7f8c8d;
             text-align: justify;
-            border-top: 1.5px solid #f1f3f5;
+            border-top: 1px solid #eee;
             padding-top: 25px;
-            line-height: 1.7;
+            line-height: 1.6;
         }
 
-        [contenteditable="true"]:focus { background: rgba(255,255,255,0.8); outline: none; border-radius: 6px; box-shadow: 0 0 0 3px rgba(26, 43, 86, 0.2); }
+        [contenteditable="true"]:focus { background: rgba(255,255,255,0.5); outline: none; border-radius: 4px; }
 
         @media print { .nav-buttons { display: none; } }
     </style>
@@ -198,7 +174,6 @@
             <button class="btn-red" onclick="downloadPDF()">PDF Saqlash</button>
         </div>
         <div id="multi-choice" class="multi-choice">
-            <span style="font-size:12px; font-weight:bold; margin-right:10px; color:#1a2b56">Yo'nalishlar soni:</span>
             <button class="btn-num" onclick="setMode(3)">3</button>
             <button class="btn-num" onclick="setMode(4)">4</button>
             <button class="btn-num" onclick="setMode(5)">5</button>
@@ -209,14 +184,14 @@
     <div id="ticket-container">
         <!-- SAHIFA 1 -->
         <div class="page" id="page1">
-            <div class="itinerary-header">Electronic Ticket Itinerary</div>
+            <div class="itinerary-header">Electronic Ticket Itinerary / Sayohat jadvali</div>
             
             <div class="header-main">
-                <div class="logo-box"><img src="./travel.png" alt="Travel Agency Logo"></div>
+                <div class="logo-box"><img src="./travel.png" alt="Logo"></div>
                 <div class="address-box">
-                    <div contenteditable="true" style="font-weight:900; color:var(--primary); margin-bottom:6px; font-size:18px;">TRAVEL LIKE PRO LLC</div>
-                    <div contenteditable="true">Toshkent, Yakkasaray Sh. Rustaveli 60</div>
-                    <div contenteditable="true">+998 50 500 5001</div>
+                    <div class="agency-name" contenteditable="true">TRAVEL LIKE PRO LLC</div>
+                    <div class="agency-info" contenteditable="true">Toshkent, Yakkasaray Sh. Rustaveli 60</div>
+                    <div class="agency-info" contenteditable="true">+998 50 500 5001</div>
                 </div>
             </div>
 
@@ -227,15 +202,13 @@
                 <div>Bagaj/Baggage</div>
             </div>
 
-            <div id="flights-container-p1">
-                <!-- Kartalar JS orqali shu yerda paydo bo'ladi -->
-            </div>
+            <div id="flights-container-p1"></div>
             <div id="legal-p1" class="legal"></div>
         </div>
 
         <!-- SAHIFA 2 -->
         <div class="page page-break" id="id-page2" style="display:none">
-            <div class="itinerary-header">Itinerary <span>(Continued)</span></div>
+            <div class="itinerary-header">Itinerary / Sayohat jadvali (Davomi)</div>
             <div class="labels-row">
                 <div>Reys/Flight</div>
                 <div>Uchish/Departure</div>
@@ -248,8 +221,7 @@
     </div>
 
     <script>
-        const legalContent = `Ko‘rsatilgan uchish vaqti va samolyot turi, chipta bron qilingan paytdagi ma’lumotga asoslangan. Aviakompaniya uchish vaqtini va samolyotni turini almashtirish huquqiga ega! Ro'yhatga olish parvoz vaqtidan 3 soat oldin boshlanadi va parvoz vaqtiga 1 soat qolganda to'xtatiladi.<br><br>
-        The indicated departure time and aircraft type are based on the information available at the time of ticket booking. The airline reserves the right to change the departure time and aircraft type. Check-in begins 3 hours before departure and closes 1 hour before the flight.`;
+        const legalContent = `Ko‘rsatilgan uchish vaqti va samolyot turi, chipta bron qilingan paytdagi ma’lumotga asoslangan. Aviakompaniya uchish vaqtini va samolyotni turini almashtirish huquqiga ega! Ro'yhatga olish parvoz vaqtidan 3 soat oldin boshlanadi va parvoz vaqtiga 1 soat qolganda to'xtatiladi.<br><br>The indicated departure time and aircraft type are based on information at the time of booking. The airline reserves the right to change the time/aircraft. Check-in closes 1 hour before departure.`;
 
         function toggleMulti() {
             const div = document.getElementById('multi-choice');
@@ -262,22 +234,22 @@
                     <div class="card-body">
                         <div>
                             <div class="f-code" contenteditable="true">VE-912${index}</div>
-                            <span style="font-size:10px; color:#94a3b8; display:block; margin-top:6px;">Airbus A321 Neo</span>
+                            <span class="plane-type" contenteditable="true">Airbus A320</span>
                         </div>
                         <div>
                             <div class="time" contenteditable="true">11:30</div>
                             <div class="date" contenteditable="true">12.07.2026</div>
-                            <div class="loc" contenteditable="true">Tashkent International Airport</div>
+                            <div class="loc" contenteditable="true">Departure Airport Name</div>
                         </div>
                         <div>
                             <div class="time" contenteditable="true">12:35</div>
                             <div class="date" contenteditable="true">12.07.2026</div>
-                            <div class="loc" contenteditable="true">Istanbul International Airport</div>
+                            <div class="loc" contenteditable="true">Arrival Airport Name</div>
                         </div>
                         <div class="baggage-cell">
                             <div contenteditable="true">
-                                <span class="baggage-title">Yuk bagaj — 1 ta, 23kg gacha</span>
-                                <span class="baggage-desc">Max 158CM | 23 kg.</span>
+                                <span class="baggage-title">Yuk bagaj — 1 ta, 0kg gacha</span>
+                                <span class="baggage-desc">Max 158CM | 0 kg.</span>
                                 <span class="baggage-title">Qo‘l yuki: 1 dona, 8 kg gacha</span>
                                 <span class="baggage-desc">Max 55*40*20CM | 8 kg.</span>
                             </div>
@@ -302,32 +274,27 @@
         }
 
         function setMode(count) {
-            const container1 = document.getElementById('flights-container-p1');
-            const container2 = document.getElementById('flights-container-p2');
-            const page2 = document.getElementById('id-page2');
-            const legal1 = document.getElementById('legal-p1');
-            const legal2 = document.getElementById('legal-p2');
+            const c1 = document.getElementById('flights-container-p1');
+            const c2 = document.getElementById('flights-container-p2');
+            const p2 = document.getElementById('id-page2');
+            const l1 = document.getElementById('legal-p1');
+            const l2 = document.getElementById('legal-p2');
 
-            container1.innerHTML = '';
-            container2.innerHTML = '';
+            c1.innerHTML = ''; c2.innerHTML = '';
             
-            // Sahifa 1
             for (let i = 1; i <= Math.min(count, 3); i++) {
-                container1.innerHTML += createFlightCard(i);
+                c1.innerHTML += createFlightCard(i);
             }
 
-            // Sahifa 2
             if (count > 3) {
-                page2.style.display = 'flex';
+                p2.style.display = 'flex';
                 for (let i = 4; i <= count; i++) {
-                    container2.innerHTML += createFlightCard(i);
+                    c2.innerHTML += createFlightCard(i);
                 }
-                legal1.innerHTML = '';
-                legal2.innerHTML = legalContent;
+                l1.innerHTML = ''; l2.innerHTML = legalContent;
             } else {
-                page2.style.display = 'none';
-                legal1.innerHTML = legalContent;
-                legal2.innerHTML = '';
+                p2.style.display = 'none';
+                l1.innerHTML = legalContent; l2.innerHTML = '';
             }
             document.getElementById('multi-choice').style.display = 'none';
         }
@@ -337,17 +304,14 @@
             const opt = {
                 margin: 0,
                 filename: 'Flight_Ticket_TravelPro.pdf',
-                image: { type: 'pdf', quality: 1 },
-                html2canvas: { scale: 2, useCORS: true, width: 800 },
+                image: { type: 'jpeg', quality: 1 },
+                html2canvas: { scale: 2, useCORS: true, width: 850 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
             };
             html2pdf().set(opt).from(element).save();
         }
 
-        // SAYT OCHILGANDA ISHGA TUSHADI
-        window.onload = function() {
-            setMode(1);
-        };
+        window.onload = () => setMode(1);
     </script>
 </body>
 </html>
