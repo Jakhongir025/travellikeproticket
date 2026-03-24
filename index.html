@@ -164,7 +164,7 @@
     <script>
         const agencyName = "TRAVEL LIKE PRO LLC";
         const agencyDetails = "Toshkent, Yakkasaray Sh. Rustaveli 60<br>+998 50 500 5001";
-        const legalText = "Ko‘rsatilgan samolyot turi chipta bron qilingan paytdagi ma’lumotga asoslangan. Aviakompaniya samolyotni almashtirishi mumkin. Yo‘lovchi va bagajni havo orqali tashish shartnomasi Varshava yoki Monreal konvensiyasi qoidalari asosida amalga oshiriladi.";
+        const legalText = "Ko‘rsatilgan uchish vaqti va samolyot turi, chipta bron qilingan paytdagi ma’lumotga asoslangan. Aviakompaniya uchish vaqtini va samolyotni turini almashtirish huquqiga ega! Ro'yhatga olish parvoz vaqtidan 3 soat oldin boshlanadi va parvoz vaqtiga 1 soat qolganda to'xtatiladi. The indicated departure time and aircraft type are based on the information available at the time of ticket booking. The airline reserves the right to change the departure time and aircraft type. Check-in opens 3 hours before departure and closes 1 hour before the flight";
 
         // Ismlar sonini tekshirish funksiyasi
         function validatePassengerNames(element) {
@@ -247,7 +247,7 @@
                     const pageDiv = document.createElement('div');
                     pageDiv.className = 'page' + (pageNum > 1 ? ' page-break' : '');
                     pageDiv.innerHTML = `
-                        <div class="top-line">ELECTRONIC TICKET ITINERARY ${pageNum > 1 ? '(CONTINUED)' : ''}</div>
+                        <div class="top-line">ELECTRONIC TICKET LINTENARY${pageNum > 1 ? '(CONTINUED)' : ''}</div>
                         <div class="header-main">
                             <div class="logo-box"><img src="./travel.png"></div>
                             <div class="agency-info">
