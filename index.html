@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Like Pro - Ticket</title>
+    <title>Travel Like Pro - Optimized Ticket System</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         :root {
             --primary-blue: #1a2b56;
-            --light-blue: #eef3f8;
+            --light-blue: #f1f4f8; 
             --text-grey: #7f8c8d;
             --border-color: #d1d8e0;
         }
@@ -18,250 +18,251 @@
         
         body { 
             font-family: 'Inter', sans-serif; 
-            background: #f0f3f5; 
-            margin: 0; 
-            padding: 20px 0; 
-            display: flex; 
-            flex-direction: column; 
-            align-items: center; 
+            background: #525659; 
+            margin: 0; padding: 20px 0; 
+            display: flex; flex-direction: column; align-items: center; 
         }
 
+        /* BOSHQUV PANELI */
         .controls { 
-            background: white; padding: 15px; border-radius: 12px; 
-            width: 900px; margin-bottom: 20px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            background: white; padding: 12px; border-radius: 12px; 
+            width: 210mm; margin-bottom: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
             display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
             position: sticky; top: 10px; z-index: 1000;
         }
 
         button { 
-            padding: 8px 16px; cursor: pointer; border: 1.5px solid var(--primary-blue); 
-            border-radius: 6px; font-weight: 700; font-size: 13px;
+            padding: 8px 14px; cursor: pointer; border: 1.5px solid var(--primary-blue); 
+            border-radius: 6px; font-weight: 700; font-size: 12px;
             background: white; color: var(--primary-blue); transition: 0.2s;
         }
         button:hover, button.active { background: var(--primary-blue); color: white; }
-        .btn-pdf { background: #f24484; color: white; border: none; margin-left: 15px; }
-        .multi-options { display: none; gap: 8px; align-items: center; margin-left: 10px; }
+        .btn-pdf { background: #27ae60; color: white; border: none; }
+        .btn-refresh { background: #f39c12; color: white; border: none; }
 
-        #ticket-container { width: 210mm; background: white; }
+        #ticket-container { width: 210mm; background: transparent; }
 
+        /* A4 SAHIFA */
         .page { 
-            width: 210mm; 
-            height: 296.5mm; 
-            padding: 12mm 15mm; 
-            background: white; 
-            display: flex; 
-            flex-direction: column;
-            overflow: hidden;
-            position: relative;
-            page-break-after: always;
+            width: 210mm; height: 297mm; padding: 6mm 12mm 8mm 12mm; 
+            background: white; display: flex; flex-direction: column;
+            overflow: hidden; position: relative; margin-bottom: 15px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
+
+        .compact-mode .flight-card { margin-bottom: 15px; } 
+        .compact-mode .logo-box img { height: 100px; }
 
         .top-line {
-            border-bottom: 1px solid #e0e0e0; padding-bottom: 5px; margin-bottom: 20px;
-            font-size: 10px; font-weight: 800; color: var(--text-grey); letter-spacing: 1.2px; text-transform: uppercase;
+            border-bottom: 1.5px solid #e0e0e0; padding-bottom: 3px; margin: 0 0 8px 0;
+            font-size: 9px; font-weight: 800; color: var(--text-grey); letter-spacing: 1px; text-transform: uppercase;
         }
 
-        .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; }
-        .logo-box img { height: 150px; object-fit: contain; }
+        .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        
+        /* LOGOTIP O'LCHAMI 150PX */
+        .logo-box img { height: 150px; width: auto; object-fit: contain; display: block; }
+
         .agency-info { text-align: right; }
-        .agency-name { font-weight: 900; color: var(--primary-blue); font-size: 18px; margin-bottom: 3px; }
-        .agency-details { font-size: 11.5px; color: #444; font-weight: 500; line-height: 1.4; }
+        .agency-name { font-weight: 900; color: var(--primary-blue); font-size: 17px; }
+        .agency-details { font-size: 10px; color: #444; line-height: 1.3; }
 
         .column-labels {
-            display: grid; 
-            grid-template-columns: 14% 29% 29% 28%; 
-            padding: 0 22px 8px 22px; 
-            font-size: 10.5px; font-weight: 800; text-transform: uppercase; color: #000;
+            display: grid; grid-template-columns: 14% 29% 29% 28%; 
+            padding: 0 15px 8px 15px; font-size: 9.5px; font-weight: 800; text-transform: uppercase;
         }
 
+        /* REYS BLOKLARI */
         .flight-card {
             border: 1px solid var(--border-color); border-radius: 12px;
-            margin-bottom: 15px; overflow: hidden; position: relative;
-            background: white;
+            margin-bottom: 55px; /* Keng oraliq saqlandi */
+            overflow: hidden; position: relative; background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
+        .flight-card:last-child { margin-bottom: 0; }
+        .flight-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--primary-blue); }
 
-        .flight-card::before {
-            content: ''; position: absolute; left: 0; top: 0; bottom: 0;
-            width: 8px; background: var(--primary-blue);
-        }
+        .card-top { display: grid; grid-template-columns: 14% 29% 29% 28%; padding: 12px 15px; align-items: start; }
+        .card-bottom { background: var(--light-blue); padding: 10px 15px; border-top: 1px dotted #a0b0c0; display: grid; grid-template-columns: 43% 29% 28%; }
 
-        .card-top {
-            display: grid; 
-            grid-template-columns: 14% 29% 29% 28%; 
-            padding: 15px 22px; 
-            align-items: start;
-        }
-
-        .card-bottom {
-            background: var(--light-blue); 
-            padding: 10px 22px; 
-            border-top: 1.2px dotted #a0b0c0;
-            display: grid; 
-            grid-template-columns: 43% 29% 28%;
-            align-items: start;
-        }
-
-        .f-num { font-weight: 800; font-size: 18px; color: var(--primary-blue); }
-        .time { font-size: 24px; font-weight: 800; color: #000; line-height: 1; }
-        .date { font-size: 13.5px; font-weight: 800; color: #000; margin-top: 2px; }
+        .f-num { font-weight: 800; font-size: 15px; color: var(--primary-blue); }
+        .time { font-size: 22px; font-weight: 800; color: #000; line-height: 1; }
+        .date { font-size: 12px; font-weight: 800; margin-top: 2px; line-height: 1; }
+        
         .airport { 
-            font-size: 10.5px; color: var(--text-grey); font-weight: 600; 
-            margin-top: 6px; display: block; line-height: 1.3;
+            font-size: 9.5px; color: var(--text-grey); font-weight: 600; 
+            margin-top: 4px; display: block; line-height: 1.0; 
         }
 
-        .bag-item { margin-bottom: 5px; line-height: 1.2; }
-        .bag-title { font-weight: 800; font-size: 10px; color: #000; display: block; }
-        .bag-desc { font-size: 9.5px; color: var(--text-grey); font-weight: 600; display: block; }
+        /* BAGAJ BO'LIMI - KICHRAYTIRILGAN SHRIFT */
+        .bag-item { margin-bottom: 4px; line-height: 1.1; }
+        .bag-title { 
+            font-weight: 700; /* Bir oz kamaytirildi */
+            font-size: 8.5px;  /* Kichraytirildi */
+            display: block; color: #000; 
+        }
+        .bag-desc { 
+            font-size: 8px;   /* Kichraytirildi */
+            color: var(--text-grey); font-weight: 500; display: block; 
+        }
 
-        .label-sm { font-size: 8.5px; color: #576574; text-transform: uppercase; font-weight: 800; margin-bottom: 3px; display: block; }
-        .val-lg { font-size: 12px; font-weight: 800; color: var(--primary-blue); white-space: pre-line; min-height: 14px; }
+        .label-sm { font-size: 8px; color: #576574; text-transform: uppercase; font-weight: 800; margin-bottom: 2px; display: block; }
+        .val-lg { font-size: 11px; font-weight: 800; color: var(--primary-blue); white-space: pre-line; min-height: 12px; line-height: 1.2; }
 
         .footer-legal {
-            margin-top: auto; padding-top: 12px; border-top: 1px solid #eee;
-            font-size: 9.5px; color: #7f8c8d; line-height: 1.3; text-align: justify;
+            margin-top: auto; padding-top: 8px; border-top: 1px solid #eee;
+            font-size: 8px; color: #7f8c8d; line-height: 1.2; text-align: justify;
         }
 
-        [contenteditable="true"]:focus { outline: none; background: #fffde7; border-radius: 2px; }
+        [contenteditable="true"]:focus { outline: none; background: #fffde7; }
 
         @media print {
             .controls { display: none; }
             body { background: white; padding: 0; }
+            .page { box-shadow: none; margin: 0; page-break-after: always; }
+        }
+
+        /* MEDIA QUERIES MOBILE */
+        @media screen and (max-width: 800px) {
+            .controls { width: 95%; }
+            #ticket-container { width: 100%; transform: scale(0.45); transform-origin: top center; }
+            body { padding: 10px 0; }
         }
     </style>
 </head>
 <body>
 
     <div class="controls">
-        <button class="btn-mode active" onclick="changeMode(1, this)">Borish</button>
-        <button class="btn-mode" onclick="changeMode(2, this)">Borish Qaytish</button>
-        <button class="btn-mode" id="multi-btn" onclick="toggleMulti(this)">Ko'p shahar ▾</button>
-        
-        <div id="multi-choices" class="multi-options">
-            <button onclick="changeMode(3, this)">3 ta</button>
-            <button onclick="changeMode(4, this)">4 ta</button>
-            <button onclick="changeMode(5, this)">5 ta</button>
-            <button onclick="changeMode(6, this)">6 ta</button>
-        </div>
-
-        <button class="btn-pdf" onclick="saveAsPDF()">PDF Yuklab Olish</button>
+        <button onclick="initLayout(1)">Borish</button>
+        <button onclick="initLayout(2)">Borish Qaytish</button>
+        <button onclick="initLayout(3)">3 ta reys</button>
+        <button onclick="initLayout(4)">4 ta reys</button>
+        <button onclick="initLayout(5)">5 ta reys</button>
+        <button onclick="initLayout(6)">6 ta reys</button>
+        <button class="btn-refresh" onclick="refreshLayout()">Tartibni Yangilash ↻</button>
+        <button class="btn-pdf" onclick="saveAsPDF()">PDF Yuklash</button>
     </div>
 
     <div id="ticket-container"></div>
 
     <script>
-        const agencyName = "TRAVEL LIKE PRO LLC";
-        const agencyDetails = "Toshkent, Yakkasaray Sh. Rustaveli 60<br>+998 50 500 5001";
-        const legalText = "Ko‘rsatilgan uchish vaqti va samolyot turi, chipta bron qilingan paytdagi ma’lumotga asoslangan. Aviakompaniya uchish vaqtini va samolyotni turini almashtirish huquqiga ega! Ro'yhatga olish parvoz vaqtidan 3 soat oldin boshlanadi va parvoz vaqtiga 1 soat qolganda to'xtatiladi. The indicated departure time and aircraft type are based on the information available at the time of ticket booking. The airline reserves the right to change the departure time and aircraft type. Check-in opens 3 hours before departure and closes 1 hour before the flight";
+        let currentTotalFlights = 1;
+        let flightData = [];
 
-        function validatePassengerNames(element) {
-            const lines = element.innerText.split('\n').filter(line => line.trim() !== "");
-            if (lines.length > 6) {
-                alert("Maksimal 6 ta yo'lovchi kiritish mumkin.");
-                element.innerText = lines.slice(0, 6).join('\n');
+        function initLayout(count) {
+            currentTotalFlights = count;
+            flightData = [];
+            for (let i = 0; i < count; i++) {
+                flightData.push({
+                    fNum: `HY-27${i+1}`,
+                    depTime: "11:30", depDate: "12.07.2026", depAir: "TAS - Tashkent International Airport",
+                    arrTime: "12:35", arrDate: "12.07.2026", arrAir: "DXB - Dubai International Airport Terminal 1",
+                    bag1: "Yuk bagaj — 1 ta, 23kg", desc1: "Max 158CM | 23 kg.",
+                    bag2: "Qo'l yuki: 1 dona, 8 kg", desc2: "Max 55*40*20CM | 8 kg.",
+                    passengers: "1. FAMILIA ISM\n2. FAMILIA ISM",
+                    ref: "MVL64Q", tNum: "784-2133031245"
+                });
             }
+            renderTickets();
         }
 
-        function createFlightCard(index) {
-            return `
-            <div class="flight-card">
-                <div class="card-top">
-                    <div>
-                        <div class="f-num" contenteditable="true">HY-27${index}</div>
-                    </div>
-                    <div>
-                        <div class="time" contenteditable="true">11:30</div>
-                        <div class="date" contenteditable="true">12.07.2026</div>
-                        <span class="airport" contenteditable="true">TAS - Toshkent</span>
-                    </div>
-                    <div>
-                        <div class="time" contenteditable="true">12:35</div>
-                        <div class="date" contenteditable="true">12.07.2026</div>
-                        <span class="airport" contenteditable="true">DXB - Dubai</span>
-                    </div>
-                    <div>
-                        <div class="bag-item">
-                            <span class="bag-title" contenteditable="true">Yuk bagaj — 1 ta, 0kg gacha</span>
-                            <span class="bag-desc" contenteditable="true">Max 158CM | 0 kg.</span>
-                        </div>
-                        <div class="bag-item">
-                            <span class="bag-title" contenteditable="true">Qo'l yuki: 1 dona, 8 kg gacha</span>
-                            <span class="bag-desc" contenteditable="true">Max 55*40*20CM | 8 kg.</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="card-bottom">
-                    <div>
-                        <span class="label-sm">Yo'lovchi / Passenger</span>
-                        <div class="val-lg" contenteditable="true" oninput="validatePassengerNames(this)">1. FAMILIA ISM\n2. FAMILIA ISM</div>
-                    </div>
-                    <div>
-                        <span class="label-sm">Buyurtma / Reference</span>
-                        <div class="val-lg" contenteditable="true">MVL64Q</div>
-                    </div>
-                    <div>
-                        <span class="label-sm">Bilet raqami / Ticket number</span>
-                        <div class="val-lg" contenteditable="true">784-2133031245</div>
-                    </div>
-                </div>
-            </div>`;
-        }
-
-        function changeMode(totalCount, btn) {
-            document.querySelectorAll('.btn-mode').forEach(b => b.classList.remove('active'));
-            if(totalCount > 2) document.getElementById('multi-btn').classList.add('active');
-            else if(btn) btn.classList.add('active');
-
+        function renderTickets() {
             const container = document.getElementById('ticket-container');
             container.innerHTML = '';
 
-            for (let i = 0; i < totalCount; i++) {
-                if (i % 3 === 0) {
-                    const pageNum = Math.floor(i / 3) + 1;
-                    const pageDiv = document.createElement('div');
-                    pageDiv.className = 'page';
-                    pageDiv.innerHTML = `
-                        <div class="top-line">ELECTRONIC TICKET ITINERARY ${pageNum > 1 ? '(CONTINUED)' : ''}</div>
-                        <div class="header-main">
-                            <div class="logo-box"><img src="./travel.png" onerror="this.src='https://via.placeholder.com/200x80?text=LOGO'"></div>
-                            <div class="agency-info">
-                                <div class="agency-name" contenteditable="true">${agencyName}</div>
-                                <div class="agency-details" contenteditable="true">${agencyDetails}</div>
+            const needsSplit = flightData.some(f => f.passengers.split('\n').filter(l => l.trim()).length > 2);
+            let flightsPerPage = (currentTotalFlights <= 6 && !needsSplit) ? 6 : 3;
+
+            for (let i = 0; i < currentTotalFlights; i += flightsPerPage) {
+                const page = document.createElement('div');
+                page.className = 'page' + (flightsPerPage === 6 ? ' compact-mode' : '');
+                
+                let flightsHtml = '';
+                for (let j = i; j < i + flightsPerPage && j < currentTotalFlights; j++) {
+                    const f = flightData[j];
+                    flightsHtml += `
+                        <div class="flight-card">
+                            <div class="card-top">
+                                <div><div class="f-num" contenteditable="true" onblur="updateData(${j}, 'fNum', this)">${f.fNum}</div></div>
+                                <div>
+                                    <div class="time" contenteditable="true" onblur="updateData(${j}, 'depTime', this)">${f.depTime}</div>
+                                    <div class="date" contenteditable="true" onblur="updateData(${j}, 'depDate', this)">${f.depDate}</div>
+                                    <span class="airport" contenteditable="true" onblur="updateData(${j}, 'depAir', this)">${f.depAir}</span>
+                                </div>
+                                <div>
+                                    <div class="time" contenteditable="true" onblur="updateData(${j}, 'arrTime', this)">${f.arrTime}</div>
+                                    <div class="date" contenteditable="true" onblur="updateData(${j}, 'arrDate', this)">${f.arrDate}</div>
+                                    <span class="airport" contenteditable="true" onblur="updateData(${j}, 'arrAir', this)">${f.arrAir}</span>
+                                </div>
+                                <div>
+                                    <div class="bag-item">
+                                        <span class="bag-title" contenteditable="true" onblur="updateData(${j}, 'bag1', this)">${f.bag1}</span>
+                                        <span class="bag-desc" contenteditable="true" onblur="updateData(${j}, 'desc1', this)">${f.desc1}</span>
+                                    </div>
+                                    <div class="bag-item">
+                                        <span class="bag-title" contenteditable="true" onblur="updateData(${j}, 'bag2', this)">${f.bag2}</span>
+                                        <span class="bag-desc" contenteditable="true" onblur="updateData(${j}, 'desc2', this)">${f.desc2}</span>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="column-labels">
-                            <div>Reys/Flight</div><div>Uchish/Departure</div><div>Qo'nish/Arrival</div><div>Bagaj/Baggage</div>
-                        </div>
-                        <div class="flights-list"></div>
-                        <div class="footer-legal">${legalText}</div>
-                    `;
-                    container.appendChild(pageDiv);
+                            <div class="card-bottom">
+                                <div>
+                                    <span class="label-sm">Yo'lovchi / Passenger</span>
+                                    <div class="val-lg" contenteditable="true" onkeyup="checkLines(this)" onblur="updateData(${j}, 'passengers', this)">${f.passengers}</div>
+                                </div>
+                                <div>
+                                    <span class="label-sm">Buyurtma / Reference</span>
+                                    <div class="val-lg" contenteditable="true" onblur="updateData(${j}, 'ref', this)">${f.ref}</div>
+                                </div>
+                                <div>
+                                    <span class="label-sm">Bilet raqami / Ticket number</span>
+                                    <div class="val-lg" contenteditable="true" onblur="updateData(${j}, 'tNum', this)">${f.tNum}</div>
+                                </div>
+                            </div>
+                        </div>`;
                 }
-                const currentFlightsList = container.lastElementChild.querySelector('.flights-list');
-                currentFlightsList.innerHTML += createFlightCard(i + 1);
+
+                page.innerHTML = `
+                    <div class="top-line">ELECTRONIC TICKET ITINERARY - TRAVEL LIKE PRO</div>
+                    <div class="header-main">
+                        <div class="logo-box"><img src="./travel.png" onerror="this.src='https://via.placeholder.com/200x80?text=LOGO'"></div>
+                        <div class="agency-info">
+                            <div class="agency-name">TRAVEL LIKE PRO LLC</div>
+                            <div class="agency-details">Toshkent, Yakkasaray Sh. Rustaveli 60<br>+998 50 500 5001</div>
+                        </div>
+                    </div>
+                    <div class="column-labels">
+                        <div>Reys/Flight</div><div>Uchish/Departure</div><div>Qo'nish/Arrival</div><div>Bagaj/Baggage</div>
+                    </div>
+                    <div class="flights-list">${flightsHtml}</div>
+                    <div class="footer-legal">Ko‘rsatilgan uchish vaqti va samolyot turi, chipta bron qilingan paytdagi ma’lumotga asoslangan. Aviakompaniya uchish vaqtini va samolyotni turini almashtirish huquqiga ega! Ro'yhatga olish parvoz vaqtidan 3 soat oldin boshlanadi va parvoz vaqtiga 1 soat qolganda to'xtatiladi. The indicated departure time and aircraft type are based on the information available at the time of ticket booking. The airline reserves the right to change the departure time and aircraft type. Check-in opens 3 hours before departure and closes 1 hour before the flight</div>
+                `;
+                container.appendChild(page);
             }
-            if(totalCount <= 2) document.getElementById('multi-choices').style.display = 'none';
         }
 
-        function toggleMulti(btn) {
-            const options = document.getElementById('multi-choices');
-            options.style.display = (options.style.display === 'flex') ? 'none' : 'flex';
+        function updateData(index, field, element) { flightData[index][field] = element.innerText; }
+        function checkLines(el) {
+            const lines = el.innerText.split('\n');
+            if (lines.length > 4) { alert("Maksimal 4 yo'lovchi ruxsat berilgan!"); el.innerText = lines.slice(0, 4).join('\n'); }
         }
+        function refreshLayout() { renderTickets(); }
 
         function saveAsPDF() {
             const element = document.getElementById('ticket-container');
             const opt = {
                 margin: 0,
-                filename: 'Travel_Like_Pro_Ticket.pdf',
-                image: { type: 'jpeg', quality: 1 },
-                html2canvas: { scale: 3, useCORS: true, letterRendering: true },
+                filename: 'Ticket_Travel_Like_Pro.pdf',
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 3, useCORS: true, scrollY: 0 },
                 jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: ['css', 'legacy'] }
+                pagebreak: { mode: 'css', after: '.page' }
             };
             html2pdf().set(opt).from(element).save();
         }
 
-        window.onload = () => changeMode(1);
+        window.onload = () => initLayout(1);
     </script>
 </body>
 </html>
