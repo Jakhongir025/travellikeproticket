@@ -9,49 +9,141 @@
     <style>
         :root {
             --primary-blue: #1a2b56;
-            --light-blue: #f1f4f8; 
+            --light-blue: #f1f4f8;
             --text-grey: #7f8c8d;
             --border-color: #d1d8e0;
         }
 
         * { box-sizing: border-box; -webkit-print-color-adjust: exact; }
-        
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background: #525659; 
-            margin: 0; padding: 20px 0; 
-            display: flex; flex-direction: column; align-items: center; 
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #525659;
+            margin: 0; padding: 20px 0;
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        /* BOSHQUV PANELI */
-        .controls { 
-            background: white; padding: 12px; border-radius: 12px; 
-            width: 210mm; margin-bottom: 20px;
+        /* ─── BOSHQARUV PANELI ─── */
+        .controls {
+            background: white; padding: 12px; border-radius: 12px;
+            width: 210mm; margin-bottom: 12px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
             position: sticky; top: 10px; z-index: 1000;
         }
 
-        button { 
-            padding: 8px 14px; cursor: pointer; border: 1.5px solid var(--primary-blue); 
+        button {
+            padding: 8px 14px; cursor: pointer; border: 1.5px solid var(--primary-blue);
             border-radius: 6px; font-weight: 700; font-size: 12px;
             background: white; color: var(--primary-blue); transition: 0.2s;
         }
         button:hover, button.active { background: var(--primary-blue); color: white; }
-        .btn-pdf { background: #27ae60; color: white; border: none; }
+        .btn-pdf  { background: #27ae60; color: white; border: none; }
         .btn-refresh { background: #f39c12; color: white; border: none; }
+        .btn-save { background: #8e44ad; color: white; border: none; }
 
+        /* ─── SAQLANGAN SHABLONLAR PANELI ─── */
+        .saved-panel {
+            background: white; border-radius: 12px;
+            width: 210mm; margin-bottom: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        .saved-panel-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 10px 16px; background: var(--primary-blue); color: white;
+            font-size: 13px; font-weight: 800; cursor: pointer; user-select: none;
+            letter-spacing: 0.5px;
+        }
+        .saved-panel-header .header-left { display: flex; align-items: center; gap: 10px; }
+        .saved-panel-header .toggle-icon { font-size: 16px; transition: transform 0.25s; }
+        .saved-panel-header.collapsed .toggle-icon { transform: rotate(-90deg); }
+
+        /* ─── HISOBLAGICH BADGE ─── */
+        .count-badge {
+            display: inline-flex; align-items: center; justify-content: center;
+            min-width: 24px; height: 24px; padding: 0 7px;
+            background: #f39c12; color: white;
+            border-radius: 999px; font-size: 13px; font-weight: 900;
+            line-height: 1; transition: transform 0.2s, background 0.3s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+        }
+        .count-badge.bump { transform: scale(1.4); }
+        .count-badge.zero { background: #95a5a6; }
+
+        .saved-list {
+            padding: 10px 12px; display: flex; flex-direction: column; gap: 6px;
+            max-height: 260px; overflow-y: auto;
+        }
+        .saved-list.hidden { display: none; }
+
+        .saved-item {
+            display: flex; align-items: center; gap: 8px;
+            border: 1.5px solid #d1d8e0; border-radius: 8px; padding: 8px 12px;
+            background: #fafbfc; transition: 0.18s; cursor: pointer;
+        }
+        .saved-item:hover { border-color: var(--primary-blue); background: #f0f4ff; }
+        .saved-item.active-slot { border-color: #8e44ad; background: #f8f0ff; }
+
+        .saved-item .s-icon { font-size: 22px; flex-shrink: 0; }
+        .saved-item .s-info { flex: 1; min-width: 0; }
+        .saved-item .s-name {
+            font-size: 12px; font-weight: 800; color: var(--primary-blue);
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        }
+        .saved-item .s-meta { font-size: 10px; color: var(--text-grey); margin-top: 1px; }
+
+        .saved-item .s-actions { display: flex; gap: 4px; flex-shrink: 0; }
+        .s-btn {
+            padding: 4px 9px; font-size: 10px; font-weight: 700; border-radius: 5px;
+            border: 1.5px solid; cursor: pointer; transition: 0.15s;
+        }
+        .s-btn-load  { border-color: var(--primary-blue); color: var(--primary-blue); background: white; }
+        .s-btn-load:hover { background: var(--primary-blue); color: white; }
+        .s-btn-del   { border-color: #e74c3c; color: #e74c3c; background: white; }
+        .s-btn-del:hover { background: #e74c3c; color: white; }
+
+        .saved-empty {
+            text-align: center; padding: 18px; color: #aaa; font-size: 12px; font-weight: 600;
+        }
+
+        /* ─── SHABLON NOMI KIRISH ─── */
+        .save-name-row {
+            display: flex; gap: 6px; align-items: center;
+            padding: 8px 12px; background: #f8f0ff; border-top: 1px solid #e5d0f8;
+        }
+        .save-name-row input {
+            flex: 1; padding: 6px 10px; border: 1.5px solid #c9a0dc;
+            border-radius: 6px; font-size: 12px; font-weight: 600; color: #333;
+            outline: none; font-family: 'Inter', sans-serif;
+        }
+        .save-name-row input:focus { border-color: #8e44ad; }
+        .save-name-row button {
+            background: #8e44ad; color: white; border: none;
+            padding: 6px 14px; font-size: 12px;
+        }
+
+        /* ─── TOAST ─── */
+        .toast {
+            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(80px);
+            background: #1a2b56; color: white; padding: 10px 22px; border-radius: 8px;
+            font-size: 13px; font-weight: 700; z-index: 9999;
+            opacity: 0; transition: all 0.35s ease;
+            box-shadow: 0 4px 18px rgba(0,0,0,0.35);
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* ─── CHIPTALAR ─── */
         #ticket-container { width: 210mm; background: transparent; }
 
-        /* A4 SAHIFA */
-        .page { 
-            width: 210mm; height: 297mm; padding: 6mm 12mm 8mm 12mm; 
+        .page {
+            width: 210mm; height: 297mm; padding: 6mm 12mm 8mm 12mm;
             background: white; display: flex; flex-direction: column;
             overflow: hidden; position: relative; margin-bottom: 15px;
             box-shadow: 0 0 15px rgba(0,0,0,0.5);
         }
 
-        .compact-mode .flight-card { margin-bottom: 15px; } 
+        .compact-mode .flight-card { margin-bottom: 15px; }
         .compact-mode .logo-box img { height: 100px; }
 
         .top-line {
@@ -60,8 +152,6 @@
         }
 
         .header-main { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-        
-        /* LOGOTIP O'LCHAMI 150PX */
         .logo-box img { height: 150px; width: auto; object-fit: contain; display: block; }
 
         .agency-info { text-align: right; }
@@ -69,14 +159,13 @@
         .agency-details { font-size: 10px; color: #444; line-height: 1.3; }
 
         .column-labels {
-            display: grid; grid-template-columns: 14% 29% 29% 28%; 
+            display: grid; grid-template-columns: 14% 29% 29% 28%;
             padding: 0 15px 8px 15px; font-size: 9.5px; font-weight: 800; text-transform: uppercase;
         }
 
-        /* REYS BLOKLARI */
         .flight-card {
             border: 1px solid var(--border-color); border-radius: 12px;
-            margin-bottom: 55px; /* Keng oraliq saqlandi */
+            margin-bottom: 55px;
             overflow: hidden; position: relative; background: white;
             box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
@@ -84,31 +173,23 @@
         .flight-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 5px; background: var(--primary-blue); }
 
         .card-top { display: grid; grid-template-columns: 14% 29% 29% 28%; padding: 12px 15px; align-items: start; }
-        .card-bottom { background: var(--light-blue); padding: 10px 15px; border-top: 1px dotted #a0b0c0; display: grid; grid-template-columns: 43% 29% 28%; }
-
-        .f-num { font-weight: 800; font-size: 15px; color: var(--primary-blue); }
-        .time { font-size: 22px; font-weight: 800; color: #000; line-height: 1; }
-        .date { font-size: 12px; font-weight: 800; margin-top: 2px; line-height: 1; }
-        
-        .airport { 
-            font-size: 9.5px; color: var(--text-grey); font-weight: 600; 
-            margin-top: 4px; display: block; line-height: 1.0; 
+        .card-bottom {
+            background: var(--light-blue); padding: 10px 15px;
+            border-top: 1px dotted #a0b0c0;
+            display: grid; grid-template-columns: 43% 29% 28%;
         }
 
-        /* BAGAJ BO'LIMI - KICHRAYTIRILGAN SHRIFT */
+        .f-num  { font-weight: 800; font-size: 15px; color: var(--primary-blue); }
+        .time   { font-size: 22px; font-weight: 800; color: #000; line-height: 1; }
+        .date   { font-size: 12px; font-weight: 800; margin-top: 2px; line-height: 1; }
+        .airport { font-size: 9.5px; color: var(--text-grey); font-weight: 600; margin-top: 4px; display: block; line-height: 1.0; }
+
         .bag-item { margin-bottom: 4px; line-height: 1.1; }
-        .bag-title { 
-            font-weight: 700; /* Bir oz kamaytirildi */
-            font-size: 8.5px;  /* Kichraytirildi */
-            display: block; color: #000; 
-        }
-        .bag-desc { 
-            font-size: 8px;   /* Kichraytirildi */
-            color: var(--text-grey); font-weight: 500; display: block; 
-        }
+        .bag-title { font-weight: 700; font-size: 8.5px; display: block; color: #000; }
+        .bag-desc  { font-size: 8px; color: var(--text-grey); font-weight: 500; display: block; }
 
         .label-sm { font-size: 8px; color: #576574; text-transform: uppercase; font-weight: 800; margin-bottom: 2px; display: block; }
-        .val-lg { font-size: 11px; font-weight: 800; color: var(--primary-blue); white-space: pre-line; min-height: 12px; line-height: 1.2; }
+        .val-lg   { font-size: 11px; font-weight: 800; color: var(--primary-blue); white-space: pre-line; min-height: 12px; line-height: 1.2; }
 
         .footer-legal {
             margin-top: auto; padding-top: 8px; border-top: 1px solid #eee;
@@ -118,14 +199,13 @@
         [contenteditable="true"]:focus { outline: none; background: #fffde7; }
 
         @media print {
-            .controls { display: none; }
+            .controls, .saved-panel, .toast { display: none; }
             body { background: white; padding: 0; }
             .page { box-shadow: none; margin: 0; page-break-after: always; }
         }
 
-        /* MEDIA QUERIES MOBILE */
         @media screen and (max-width: 800px) {
-            .controls { width: 95%; }
+            .controls, .saved-panel { width: 95%; }
             #ticket-container { width: 100%; transform: scale(0.45); transform-origin: top center; }
             body { padding: 10px 0; }
         }
@@ -133,136 +213,367 @@
 </head>
 <body>
 
-    <div class="controls">
-        <button onclick="initLayout(1)">Borish</button>
-        <button onclick="initLayout(2)">Borish Qaytish</button>
-        <button onclick="initLayout(3)">3 ta reys</button>
-        <button onclick="initLayout(4)">4 ta reys</button>
-        <button onclick="initLayout(5)">5 ta reys</button>
-        <button onclick="initLayout(6)">6 ta reys</button>
-        <button class="btn-refresh" onclick="refreshLayout()">Tartibni Yangilash ↻</button>
-        <button class="btn-pdf" onclick="saveAsPDF()">PDF Yuklash</button>
+<!-- BOSHQARUV PANELI -->
+<div class="controls">
+    <button onclick="initLayout(1)">Borish</button>
+    <button onclick="initLayout(2)">Borish Qaytish</button>
+    <button onclick="initLayout(3)">3 ta reys</button>
+    <button onclick="initLayout(4)">4 ta reys</button>
+    <button onclick="initLayout(5)">5 ta reys</button>
+    <button onclick="initLayout(6)">6 ta reys</button>
+    <button class="btn-refresh" onclick="refreshLayout()">Tartibni Yangilash ↻</button>
+    <button class="btn-save"    onclick="openSaveDialog()">💾 Shablon Saqlash</button>
+    <button class="btn-pdf"     onclick="saveAsPDF()">PDF Yuklash</button>
+</div>
+
+<!-- SAQLANGAN SHABLONLAR PANELI -->
+<div class="saved-panel">
+    <div class="saved-panel-header" id="savedHeader" onclick="toggleSavedPanel()">
+        <div class="header-left">
+            <span>📁 Saqlangan Shablonlar</span>
+            <span class="count-badge zero" id="countBadge">0</span>
+        </div>
+        <span class="toggle-icon" id="toggleIcon">▼</span>
     </div>
 
-    <div id="ticket-container"></div>
+    <!-- Nom kiritish satri (yashirin) -->
+    <div class="save-name-row" id="saveNameRow" style="display:none;">
+        <input type="text" id="saveNameInput" placeholder="Shablon nomi (masalan: Dubai reysi)" maxlength="50">
+        <button onclick="confirmSave()">✅ Saqlash</button>
+        <button onclick="cancelSave()" style="background:#e74c3c;color:white;border:none;">✕</button>
+    </div>
 
-    <script>
-        let currentTotalFlights = 1;
-        let flightData = [];
+    <div class="saved-list" id="savedList">
+        <div class="saved-empty" id="emptyMsg">Hali saqlangan shablon yo'q</div>
+    </div>
+</div>
 
-        function initLayout(count) {
-            currentTotalFlights = count;
-            flightData = [];
-            for (let i = 0; i < count; i++) {
-                flightData.push({
-                    fNum: `HY-27${i+1}`,
-                    depTime: "11:30", depDate: "12.07.2026", depAir: "TAS - Tashkent International Airport",
-                    arrTime: "12:35", arrDate: "12.07.2026", arrAir: "DXB - Dubai International Airport Terminal 1",
-                    bag1: "Yuk bagaj — 1 ta, 23kg", desc1: "Max 158CM | 23 kg.",
-                    bag2: "Qo'l yuki: 1 dona, 8 kg", desc2: "Max 55*40*20CM | 8 kg.",
-                    passengers: "1. FAMILIA ISM\n2. FAMILIA ISM",
-                    ref: "MVL64Q", tNum: "784-2133031245"
-                });
+<div id="ticket-container"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+    const STORAGE_KEY = 'tlp_saved_templates';
+    let currentTotalFlights = 1;
+    let flightData = [];
+    let activeSlotId = null;   // hozir yuklangan shablon ID
+    let panelOpen = true;
+
+    /* ══════════════════════════════
+       ASOSIY RENDER
+    ══════════════════════════════ */
+    function initLayout(count) {
+        currentTotalFlights = count;
+        activeSlotId = null;
+        flightData = [];
+        for (let i = 0; i < count; i++) {
+            flightData.push(defaultFlight(i));
+        }
+        renderTickets();
+        highlightActive();
+    }
+
+    function defaultFlight(i) {
+        return {
+            fNum: `HY-27${i + 1}`,
+            depTime: "11:30", depDate: "12.07.2026",
+            depAir: "TAS - Tashkent International Airport",
+            arrTime: "12:35", arrDate: "12.07.2026",
+            arrAir: "DXB - Dubai International Airport Terminal 1",
+            bag1: "Yuk bagaj — 1 ta, 23kg", desc1: "Max 158CM | 23 kg.",
+            bag2: "Qo'l yuki: 1 dona, 8 kg", desc2: "Max 55*40*20CM | 8 kg.",
+            passengers: "1. FAMILIA ISM\n2. FAMILIA ISM",
+            ref: "MVL64Q", tNum: "784-2133031245"
+        };
+    }
+
+    function renderTickets() {
+        const container = document.getElementById('ticket-container');
+        container.innerHTML = '';
+
+        const needsSplit = flightData.some(f => f.passengers.split('\n').filter(l => l.trim()).length > 2);
+        let flightsPerPage = (currentTotalFlights <= 6 && !needsSplit) ? 6 : 3;
+
+        for (let i = 0; i < currentTotalFlights; i += flightsPerPage) {
+            const page = document.createElement('div');
+            page.className = 'page' + (flightsPerPage === 6 ? ' compact-mode' : '');
+
+            let flightsHtml = '';
+            for (let j = i; j < i + flightsPerPage && j < currentTotalFlights; j++) {
+                const f = flightData[j];
+                flightsHtml += `
+                    <div class="flight-card">
+                        <div class="card-top">
+                            <div><div class="f-num" contenteditable="true" onblur="updateData(${j},'fNum',this)">${f.fNum}</div></div>
+                            <div>
+                                <div class="time" contenteditable="true" onblur="updateData(${j},'depTime',this)">${f.depTime}</div>
+                                <div class="date" contenteditable="true" onblur="updateData(${j},'depDate',this)">${f.depDate}</div>
+                                <span class="airport" contenteditable="true" onblur="updateData(${j},'depAir',this)">${f.depAir}</span>
+                            </div>
+                            <div>
+                                <div class="time" contenteditable="true" onblur="updateData(${j},'arrTime',this)">${f.arrTime}</div>
+                                <div class="date" contenteditable="true" onblur="updateData(${j},'arrDate',this)">${f.arrDate}</div>
+                                <span class="airport" contenteditable="true" onblur="updateData(${j},'arrAir',this)">${f.arrAir}</span>
+                            </div>
+                            <div>
+                                <div class="bag-item">
+                                    <span class="bag-title" contenteditable="true" onblur="updateData(${j},'bag1',this)">${f.bag1}</span>
+                                    <span class="bag-desc"  contenteditable="true" onblur="updateData(${j},'desc1',this)">${f.desc1}</span>
+                                </div>
+                                <div class="bag-item">
+                                    <span class="bag-title" contenteditable="true" onblur="updateData(${j},'bag2',this)">${f.bag2}</span>
+                                    <span class="bag-desc"  contenteditable="true" onblur="updateData(${j},'desc2',this)">${f.desc2}</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-bottom">
+                            <div>
+                                <span class="label-sm">Yo'lovchi / Passenger</span>
+                                <div class="val-lg" contenteditable="true" onkeyup="checkLines(this)" onblur="updateData(${j},'passengers',this)">${f.passengers}</div>
+                            </div>
+                            <div>
+                                <span class="label-sm">Buyurtma / Reference</span>
+                                <div class="val-lg" contenteditable="true" onblur="updateData(${j},'ref',this)">${f.ref}</div>
+                            </div>
+                            <div>
+                                <span class="label-sm">Bilet raqami / Ticket number</span>
+                                <div class="val-lg" contenteditable="true" onblur="updateData(${j},'tNum',this)">${f.tNum}</div>
+                            </div>
+                        </div>
+                    </div>`;
             }
-            renderTickets();
+
+            page.innerHTML = `
+                <div class="top-line">ELECTRONIC TICKET ITINERARY - TRAVEL LIKE PRO</div>
+                <div class="header-main">
+                    <div class="logo-box"><img src="./travel.png" onerror="this.src='https://via.placeholder.com/200x80?text=LOGO'"></div>
+                    <div class="agency-info">
+                        <div class="agency-name">TRAVEL LIKE PRO LLC</div>
+                        <div class="agency-details">Toshkent, Yakkasaray Sh. Rustaveli 60<br>+998 50 500 5001</div>
+                    </div>
+                </div>
+                <div class="column-labels">
+                    <div>Reys/Flight</div><div>Uchish/Departure</div><div>Qo'nish/Arrival</div><div>Bagaj/Baggage</div>
+                </div>
+                <div class="flights-list">${flightsHtml}</div>
+                <div class="footer-legal">Ko'rsatilgan uchish vaqti va samolyot turi, chipta bron qilingan paytdagi ma'lumotga asoslangan. Aviakompaniya uchish vaqtini va samolyotni turini almashtirish huquqiga ega! Ro'yhatga olish parvoz vaqtidan 3 soat oldin boshlanadi va parvoz vaqtiga 1 soat qolganda to'xtatiladi. The indicated departure time and aircraft type are based on the information available at the time of ticket booking. The airline reserves the right to change the departure time and aircraft type. Check-in opens 3 hours before departure and closes 1 hour before the flight</div>
+            `;
+            container.appendChild(page);
+        }
+    }
+
+    function updateData(index, field, element) {
+        flightData[index][field] = element.innerText;
+        // Agar aktiv shablon bo'lsa — avtomatik yangilash (ixtiyoriy)
+        // autoUpdateSlot();
+    }
+
+    function checkLines(el) {
+        const lines = el.innerText.split('\n');
+        if (lines.length > 4) {
+            alert("Maksimal 4 yo'lovchi ruxsat berilgan!");
+            el.innerText = lines.slice(0, 4).join('\n');
+        }
+    }
+
+    function refreshLayout() { renderTickets(); }
+
+    /* ══════════════════════════════
+       SAQLASH TIZIMI
+    ══════════════════════════════ */
+    function getSaved() {
+        try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+        catch { return []; }
+    }
+    function setSaved(arr) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    }
+
+    function openSaveDialog() {
+        const row = document.getElementById('saveNameRow');
+        const input = document.getElementById('saveNameInput');
+        // Agar aktiv shablon bo'lsa — nomini oldindan to'ldirish
+        if (activeSlotId) {
+            const saved = getSaved();
+            const slot = saved.find(s => s.id === activeSlotId);
+            if (slot) input.value = slot.name;
+        } else {
+            input.value = '';
+        }
+        row.style.display = 'flex';
+        input.focus();
+        // Panel ochiq bo'lishi
+        if (!panelOpen) toggleSavedPanel();
+    }
+
+    function cancelSave() {
+        document.getElementById('saveNameRow').style.display = 'none';
+    }
+
+    function confirmSave() {
+        const input = document.getElementById('saveNameInput');
+        const name  = input.value.trim() || formatTimestamp(new Date());
+        const saved = getSaved();
+
+        const slot = {
+            id: activeSlotId || Date.now().toString(),
+            name,
+            savedAt: new Date().toISOString(),
+            totalFlights: currentTotalFlights,
+            flights: JSON.parse(JSON.stringify(flightData))
+        };
+
+        // Mavjud bo'lsa yangilash, bo'lmasa qo'shish
+        const idx = saved.findIndex(s => s.id === slot.id);
+        if (idx >= 0) saved[idx] = slot;
+        else saved.unshift(slot);
+
+        setSaved(saved);
+        activeSlotId = slot.id;
+        document.getElementById('saveNameRow').style.display = 'none';
+        renderSavedList();
+        highlightActive();
+        showToast(`✅ "${name}" saqlandi`);
+    }
+
+    /* ══════════════════════════════
+       RO'YXATNI CHIZISH
+    ══════════════════════════════ */
+    function renderSavedList() {
+        const saved = getSaved();
+        const list  = document.getElementById('savedList');
+
+        // ── BADGE YANGILASH ──
+        const badge = document.getElementById('countBadge');
+        const prev  = parseInt(badge.textContent) || 0;
+        badge.textContent = saved.length;
+        badge.classList.toggle('zero', saved.length === 0);
+        // Yangi shablon qo'shilganda "sakrash" animatsiyasi
+        if (saved.length > prev) {
+            badge.classList.add('bump');
+            setTimeout(() => badge.classList.remove('bump'), 300);
         }
 
-        function renderTickets() {
-            const container = document.getElementById('ticket-container');
-            container.innerHTML = '';
+        if (saved.length === 0) {
+            list.innerHTML = '<div class="saved-empty">Hali saqlangan shablon yo\'q</div>';
+            return;
+        }
 
-            const needsSplit = flightData.some(f => f.passengers.split('\n').filter(l => l.trim()).length > 2);
-            let flightsPerPage = (currentTotalFlights <= 6 && !needsSplit) ? 6 : 3;
-
-            for (let i = 0; i < currentTotalFlights; i += flightsPerPage) {
-                const page = document.createElement('div');
-                page.className = 'page' + (flightsPerPage === 6 ? ' compact-mode' : '');
-                
-                let flightsHtml = '';
-                for (let j = i; j < i + flightsPerPage && j < currentTotalFlights; j++) {
-                    const f = flightData[j];
-                    flightsHtml += `
-                        <div class="flight-card">
-                            <div class="card-top">
-                                <div><div class="f-num" contenteditable="true" onblur="updateData(${j}, 'fNum', this)">${f.fNum}</div></div>
-                                <div>
-                                    <div class="time" contenteditable="true" onblur="updateData(${j}, 'depTime', this)">${f.depTime}</div>
-                                    <div class="date" contenteditable="true" onblur="updateData(${j}, 'depDate', this)">${f.depDate}</div>
-                                    <span class="airport" contenteditable="true" onblur="updateData(${j}, 'depAir', this)">${f.depAir}</span>
-                                </div>
-                                <div>
-                                    <div class="time" contenteditable="true" onblur="updateData(${j}, 'arrTime', this)">${f.arrTime}</div>
-                                    <div class="date" contenteditable="true" onblur="updateData(${j}, 'arrDate', this)">${f.arrDate}</div>
-                                    <span class="airport" contenteditable="true" onblur="updateData(${j}, 'arrAir', this)">${f.arrAir}</span>
-                                </div>
-                                <div>
-                                    <div class="bag-item">
-                                        <span class="bag-title" contenteditable="true" onblur="updateData(${j}, 'bag1', this)">${f.bag1}</span>
-                                        <span class="bag-desc" contenteditable="true" onblur="updateData(${j}, 'desc1', this)">${f.desc1}</span>
-                                    </div>
-                                    <div class="bag-item">
-                                        <span class="bag-title" contenteditable="true" onblur="updateData(${j}, 'bag2', this)">${f.bag2}</span>
-                                        <span class="bag-desc" contenteditable="true" onblur="updateData(${j}, 'desc2', this)">${f.desc2}</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="card-bottom">
-                                <div>
-                                    <span class="label-sm">Yo'lovchi / Passenger</span>
-                                    <div class="val-lg" contenteditable="true" onkeyup="checkLines(this)" onblur="updateData(${j}, 'passengers', this)">${f.passengers}</div>
-                                </div>
-                                <div>
-                                    <span class="label-sm">Buyurtma / Reference</span>
-                                    <div class="val-lg" contenteditable="true" onblur="updateData(${j}, 'ref', this)">${f.ref}</div>
-                                </div>
-                                <div>
-                                    <span class="label-sm">Bilet raqami / Ticket number</span>
-                                    <div class="val-lg" contenteditable="true" onblur="updateData(${j}, 'tNum', this)">${f.tNum}</div>
-                                </div>
-                            </div>
-                        </div>`;
-                }
-
-                page.innerHTML = `
-                    <div class="top-line">ELECTRONIC TICKET ITINERARY - TRAVEL LIKE PRO</div>
-                    <div class="header-main">
-                        <div class="logo-box"><img src="./travel.png" onerror="this.src='https://via.placeholder.com/200x80?text=LOGO'"></div>
-                        <div class="agency-info">
-                            <div class="agency-name">TRAVEL LIKE PRO LLC</div>
-                            <div class="agency-details">Toshkent, Yakkasaray Sh. Rustaveli 60<br>+998 50 500 5001</div>
+        list.innerHTML = saved.map((slot, idx) => {
+            const dt = new Date(slot.savedAt);
+            const isActive = slot.id === activeSlotId;
+            return `
+                <div class="saved-item ${isActive ? 'active-slot' : ''}" id="slot-${slot.id}">
+                    <div class="s-icon">🗂️</div>
+                    <div class="s-info">
+                        <div class="s-name" title="${escHtml(slot.name)}">
+                            <span style="color:#8e44ad;font-size:10px;margin-right:4px;">#${idx + 1}</span>${escHtml(slot.name)}
+                        </div>
+                        <div class="s-meta">
+                            🕐 ${formatTimestamp(dt)} &nbsp;|&nbsp; ✈️ ${slot.totalFlights} ta reys
                         </div>
                     </div>
-                    <div class="column-labels">
-                        <div>Reys/Flight</div><div>Uchish/Departure</div><div>Qo'nish/Arrival</div><div>Bagaj/Baggage</div>
+                    <div class="s-actions">
+                        <button class="s-btn s-btn-load" onclick="loadSlot('${slot.id}')">📂 Yuklash</button>
+                        <button class="s-btn s-btn-del"  onclick="deleteSlot('${slot.id}')">🗑️</button>
                     </div>
-                    <div class="flights-list">${flightsHtml}</div>
-                    <div class="footer-legal">Ko‘rsatilgan uchish vaqti va samolyot turi, chipta bron qilingan paytdagi ma’lumotga asoslangan. Aviakompaniya uchish vaqtini va samolyotni turini almashtirish huquqiga ega! Ro'yhatga olish parvoz vaqtidan 3 soat oldin boshlanadi va parvoz vaqtiga 1 soat qolganda to'xtatiladi. The indicated departure time and aircraft type are based on the information available at the time of ticket booking. The airline reserves the right to change the departure time and aircraft type. Check-in opens 3 hours before departure and closes 1 hour before the flight</div>
-                `;
-                container.appendChild(page);
-            }
-        }
+                </div>`;
+        }).join('');
+    }
 
-        function updateData(index, field, element) { flightData[index][field] = element.innerText; }
-        function checkLines(el) {
-            const lines = el.innerText.split('\n');
-            if (lines.length > 4) { alert("Maksimal 4 yo'lovchi ruxsat berilgan!"); el.innerText = lines.slice(0, 4).join('\n'); }
-        }
-        function refreshLayout() { renderTickets(); }
+    function loadSlot(id) {
+        const saved = getSaved();
+        const slot  = saved.find(s => s.id === id);
+        if (!slot) return;
 
-        function saveAsPDF() {
-            const element = document.getElementById('ticket-container');
-            const opt = {
-                margin: 0,
-                filename: 'Ticket_Travel_Like_Pro.pdf',
-                image: { type: 'jpeg', quality: 0.98 },
-                html2canvas: { scale: 3, useCORS: true, scrollY: 0 },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-                pagebreak: { mode: 'css', after: '.page' }
-            };
-            html2pdf().set(opt).from(element).save();
-        }
+        currentTotalFlights = slot.totalFlights;
+        flightData = JSON.parse(JSON.stringify(slot.flights));
+        activeSlotId = id;
+        renderTickets();
+        renderSavedList();
+        showToast(`📂 "${slot.name}" yuklandi`);
+    }
 
-        window.onload = () => initLayout(1);
-    </script>
+    function deleteSlot(id) {
+        const saved = getSaved().filter(s => s.id !== id);
+        setSaved(saved);
+        if (activeSlotId === id) activeSlotId = null;
+        renderSavedList();
+        showToast('🗑️ Shablon o\'chirildi');
+    }
+
+    /* ══════════════════════════════
+       PANEL TOGGLE
+    ══════════════════════════════ */
+    function toggleSavedPanel() {
+        panelOpen = !panelOpen;
+        const list   = document.getElementById('savedList');
+        const header = document.getElementById('savedHeader');
+        const icon   = document.getElementById('toggleIcon');
+        const nameRow = document.getElementById('saveNameRow');
+        if (panelOpen) {
+            list.classList.remove('hidden');
+            header.classList.remove('collapsed');
+            icon.textContent = '▼';
+        } else {
+            list.classList.add('hidden');
+            nameRow.style.display = 'none';
+            header.classList.add('collapsed');
+            icon.textContent = '▼';
+        }
+    }
+
+    /* ══════════════════════════════
+       YORDAMCHI
+    ══════════════════════════════ */
+    function highlightActive() {
+        document.querySelectorAll('.saved-item').forEach(el => {
+            el.classList.toggle('active-slot', el.id === 'slot-' + activeSlotId);
+        });
+    }
+
+    function formatTimestamp(dt) {
+        const d = String(dt.getDate()).padStart(2,'0');
+        const m = String(dt.getMonth()+1).padStart(2,'0');
+        const y = dt.getFullYear();
+        const H = String(dt.getHours()).padStart(2,'0');
+        const M = String(dt.getMinutes()).padStart(2,'0');
+        return `${d}.${m}.${y} ${H}:${M}`;
+    }
+
+    function escHtml(str) {
+        return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function showToast(msg) {
+        const t = document.getElementById('toast');
+        t.textContent = msg;
+        t.classList.add('show');
+        setTimeout(() => t.classList.remove('show'), 2600);
+    }
+
+    /* ══════════════════════════════
+       PDF
+    ══════════════════════════════ */
+    function saveAsPDF() {
+        const element = document.getElementById('ticket-container');
+        const opt = {
+            margin: 0,
+            filename: 'Ticket_Travel_Like_Pro.pdf',
+            image: { type: 'jpeg', quality: 0.98 },
+            html2canvas: { scale: 3, useCORS: true, scrollY: 0 },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+            pagebreak: { mode: 'css', after: '.page' }
+        };
+        html2pdf().set(opt).from(element).save();
+    }
+
+    /* ══════════════════════════════
+       ISHGA TUSHIRISH
+    ══════════════════════════════ */
+    window.onload = () => {
+        initLayout(1);
+        renderSavedList();
+    };
+</script>
 </body>
 </html>
