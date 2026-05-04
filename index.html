@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travel Like Pro - Optimized Ticket System</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             --primary-blue: #1a2b56;
@@ -146,6 +147,9 @@
         .compact-mode .flight-card { margin-bottom: 15px; }
         .compact-mode .logo-box img { height: 100px; }
 
+        .four-mode .flight-card { margin-bottom: 14px; }
+        .four-mode .logo-box img { height: 100px; }
+
         .top-line {
             border-bottom: 1.5px solid #e0e0e0; padding-bottom: 3px; margin: 0 0 8px 0;
             font-size: 9px; font-weight: 800; color: var(--text-grey); letter-spacing: 1px; text-transform: uppercase;
@@ -189,7 +193,7 @@
         .bag-desc  { font-size: 8px; color: var(--text-grey); font-weight: 500; display: block; }
 
         .label-sm { font-size: 8px; color: #576574; text-transform: uppercase; font-weight: 800; margin-bottom: 2px; display: block; }
-        .val-lg   { font-size: 11px; font-weight: 800; color: var(--primary-blue); white-space: pre-line; min-height: 12px; line-height: 1.2; }
+        .val-lg   { font-size: 11px; font-weight: 800; color: var(--primary-blue); white-space: pre-line; min-height: 56px; line-height: 1.3; }
 
         .footer-legal {
             margin-top: auto; padding-top: 8px; border-top: 1px solid #eee;
@@ -202,6 +206,7 @@
             .controls, .saved-panel, .toast { display: none; }
             body { background: white; padding: 0; }
             .page { box-shadow: none; margin: 0; page-break-after: always; }
+            .page:last-child { page-break-after: avoid; }
         }
 
         @media screen and (max-width: 800px) {
@@ -290,12 +295,11 @@
         const container = document.getElementById('ticket-container');
         container.innerHTML = '';
 
-        const needsSplit = flightData.some(f => f.passengers.split('\n').filter(l => l.trim()).length > 2);
-        let flightsPerPage = (currentTotalFlights <= 6 && !needsSplit) ? 6 : 3;
+        const flightsPerPage = 4;
 
         for (let i = 0; i < currentTotalFlights; i += flightsPerPage) {
             const page = document.createElement('div');
-            page.className = 'page' + (flightsPerPage === 6 ? ' compact-mode' : '');
+            page.className = 'page four-mode';
 
             let flightsHtml = '';
             for (let j = i; j < i + flightsPerPage && j < currentTotalFlights; j++) {
@@ -362,9 +366,8 @@
     }
 
     function updateData(index, field, element) {
-        flightData[index][field] = element.innerText;
-        // Agar aktiv shablon bo'lsa — avtomatik yangilash (ixtiyoriy)
-        // autoUpdateSlot();
+        if (!flightData[index]) return;   // himoya
+        flightData[index][field] = element.innerText.trim();
     }
 
     function checkLines(el) {
@@ -373,6 +376,36 @@
             alert("Maksimal 4 yo'lovchi ruxsat berilgan!");
             el.innerText = lines.slice(0, 4).join('\n');
         }
+    }
+
+    // DOM'dagi barcha contenteditable qiymatlarini o'qib flightData'ni yangilaydi
+    function syncFromDOM() {
+        const cards = document.querySelectorAll('.flight-card');
+        cards.forEach((card, j) => {
+            if (!flightData[j]) return;
+            const get = cls => (card.querySelector(cls)?.innerText || '').trim();
+            flightData[j].fNum       = get('.f-num');
+            flightData[j].depTime    = get('.card-top > div:nth-child(2) .time');
+            flightData[j].depDate    = get('.card-top > div:nth-child(2) .date');
+            flightData[j].depAir     = get('.card-top > div:nth-child(2) .airport');
+            flightData[j].arrTime    = get('.card-top > div:nth-child(3) .time');
+            flightData[j].arrDate    = get('.card-top > div:nth-child(3) .date');
+            flightData[j].arrAir     = get('.card-top > div:nth-child(3) .airport');
+            const bags = card.querySelectorAll('.bag-title');
+            const descs = card.querySelectorAll('.bag-desc');
+            if (bags[0])  flightData[j].bag1  = bags[0].innerText.trim();
+            if (descs[0]) flightData[j].desc1 = descs[0].innerText.trim();
+            if (bags[1])  flightData[j].bag2  = bags[1].innerText.trim();
+            if (descs[1]) flightData[j].desc2 = descs[1].innerText.trim();
+            const bottom = card.querySelectorAll('.val-lg');
+            if (bottom[0]) flightData[j].passengers = bottom[0].innerText.trim();
+            if (bottom[1]) flightData[j].ref         = bottom[1].innerText.trim();
+            if (bottom[2]) flightData[j].tNum        = bottom[2].innerText.trim();
+        });
+        // DOM'da nechta karta bo'lsa — shuncha reys bor deb hisoblaymiz
+        const domCount = cards.length;
+        flightData   = flightData.slice(0, domCount);
+        currentTotalFlights = domCount;
     }
 
     function refreshLayout() { renderTickets(); }
@@ -410,19 +443,23 @@
     }
 
     function confirmSave() {
+        // DOM'dan so'nggi holatni o'qib olish (blur olmagan maydonlar uchun)
+        syncFromDOM();
+
         const input = document.getElementById('saveNameInput');
         const name  = input.value.trim() || formatTimestamp(new Date());
         const saved = getSaved();
+
+        const realCount = flightData.length;   // DOM'dan olingan haqiqiy son
 
         const slot = {
             id: activeSlotId || Date.now().toString(),
             name,
             savedAt: new Date().toISOString(),
-            totalFlights: currentTotalFlights,
+            totalFlights: realCount,
             flights: JSON.parse(JSON.stringify(flightData))
         };
 
-        // Mavjud bo'lsa yangilash, bo'lmasa qo'shish
         const idx = saved.findIndex(s => s.id === slot.id);
         if (idx >= 0) saved[idx] = slot;
         else saved.unshift(slot);
@@ -432,7 +469,7 @@
         document.getElementById('saveNameRow').style.display = 'none';
         renderSavedList();
         highlightActive();
-        showToast(`✅ "${name}" saqlandi`);
+        showToast(`✅ "${name}" saqlandi (${realCount} ta reys)`);
     }
 
     /* ══════════════════════════════
@@ -554,17 +591,40 @@
     /* ══════════════════════════════
        PDF
     ══════════════════════════════ */
-    function saveAsPDF() {
-        const element = document.getElementById('ticket-container');
-        const opt = {
-            margin: 0,
-            filename: 'Ticket_Travel_Like_Pro.pdf',
-            image: { type: 'jpeg', quality: 0.98 },
-            html2canvas: { scale: 3, useCORS: true, scrollY: 0 },
-            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak: { mode: 'css', after: '.page' }
-        };
-        html2pdf().set(opt).from(element).save();
+    async function saveAsPDF() {
+        const pages = [...document.querySelectorAll('#ticket-container .page')];
+        if (!pages.length) return;
+
+        showToast('📄 PDF tayyorlanmoqda...');
+        pages.forEach(p => { p.style.marginBottom = '0'; p.style.boxShadow = 'none'; });
+
+        try {
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF({ unit: 'mm', format: 'a4', orientation: 'portrait' });
+
+            for (let i = 0; i < pages.length; i++) {
+                const canvas = await html2canvas(pages[i], {
+                    scale: 2,
+                    useCORS: true,
+                    scrollY: 0,
+                    width:  pages[i].offsetWidth,
+                    height: pages[i].offsetHeight
+                });
+
+                if (i > 0) pdf.addPage();
+                // Canvas ni aynan A4 o'lchamiga (210x297mm) sig'dirish
+                pdf.addImage(canvas.toDataURL('image/jpeg', 0.98), 'JPEG', 0, 0, 210, 297);
+            }
+
+            pdf.save('Ticket_Travel_Like_Pro.pdf');
+            showToast('✅ PDF yuklandi (' + pages.length + ' sahifa)!');
+
+        } catch (err) {
+            console.error(err);
+            showToast('❌ Xatolik: ' + err.message);
+        } finally {
+            pages.forEach(p => { p.style.marginBottom = ''; p.style.boxShadow = ''; });
+        }
     }
 
     /* ══════════════════════════════
